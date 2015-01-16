@@ -41,8 +41,10 @@ PSCommandService.prototype.executeForStdout = function(commandName, argument2Val
 PSCommandService.prototype._executeForStdout = function(command) {
     var self = this;
 
+    console.log('#########################\nExecuting:\n'+command+'\n#########################');
+
     return new Promise(function(fulfill,reject) {
-        self.executeCommands([command])
+        self._executeCommands([command])
         .then(function(cmdResults) {
             fulfill(cmdResults[command].stdout);
         }).catch(function(error) {
