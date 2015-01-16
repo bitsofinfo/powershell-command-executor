@@ -23,7 +23,7 @@
         "exec"
     ],
     "dependencies":{
-        "stateful-process-command-proxy":"latest"
+        "stateful-process-command-proxy":"latest",
         "promise":"latest"
     },
     "devDependencies":{
