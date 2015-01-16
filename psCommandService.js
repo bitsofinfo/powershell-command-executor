@@ -3,6 +3,14 @@ module.exports = PSCommandService;
 var Promise = require('promise');
 var Mustache = require('mustache');
 
+/**
+* PSCommandService
+*
+* @param statefulProcessCommandProxy all commands will be executed over this
+* @param commandRegistry registry/hash of Powershell commands
+*        @see o365CommandRegistry.js for examples
+*
+*/
 function PSCommandService(statefulProcessCommandProxy, commandRegistry) {
     this._statefulProcessCommandProxy = statefulProcessCommandProxy;
     this._commandRegistry = commandRegistry;
@@ -86,6 +94,7 @@ PSCommandService.prototype._executeCommands = function(commands) {
 *
 * @return a formatted powershell command string suitable for execution
 *
+* !!!! TODO: put in security protection for "injection" (i.e command termination, newlines etc)
 */
 PSCommandService.prototype._generateCommand = function(commandConfig, argument2ValueMap) {
 

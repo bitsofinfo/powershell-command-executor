@@ -1,7 +1,7 @@
 {
     "name":"powershell-command-executor",
     "version":"1.0.0",
-    "description":"Module that provides a registry and gateway for execution powershell commands",
+    "description":"Module that provides a registry and gateway for execution powershell commands through long-lived established remote PSSessions",
     "main":"psCommandService.js",
     "directories":{
         "test":"test"
