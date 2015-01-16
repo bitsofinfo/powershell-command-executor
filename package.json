@@ -1,0 +1,47 @@
+{
+    "name":"powershell-command-executor",
+    "version":"1.0.0",
+    "description":"Module that provides a registry and gateway for execution powershell commands",
+    "main":"psCommandService.js",
+    "directories":{
+        "test":"test"
+    },
+    "scripts":{
+        "test":"test/all.js"
+    },
+    "keywords":[
+        "command",
+        "process",
+        "os",
+        "dos",
+        "commandline",
+        "command line",
+        "shell",
+        "windows",
+        "powershell",
+        "execute",
+        "exec"
+    ],
+    "dependencies":{
+        "stateful-process-command-proxy":"latest"
+        "promise":"latest"
+    },
+    "devDependencies":{
+        "mocha":"latest"
+    },
+    "contributors":[
+        {
+            "name":"bitsofinfo",
+            "url":"http://bitsofinfo.wordpress.com"
+        }
+    ],
+    "license":"ISC",
+    "repository":{
+        "type":"git",
+        "url":"https://github.com/bitsofinfo/powershell-command-executor.git"
+    },
+    "bugs":{
+        "url":"https://github.com/bitsofinfo/powershell-command-executor/issues"
+    },
+    "homepage":"https://github.com/bitsofinfo/powershell-command-executor"
+}
