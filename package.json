@@ -24,7 +24,8 @@
     ],
     "dependencies":{
         "stateful-process-command-proxy":"latest",
-        "promise":"latest"
+        "promise":"latest",
+        "mustache":"latest"
     },
     "devDependencies":{
         "mocha":"latest"
