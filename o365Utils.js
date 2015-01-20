@@ -62,6 +62,11 @@ module.exports.o365CommandRegistry = {
     *
     ********************************/
 
+
+    /*******************************
+    * DistributionGroups
+    ********************************/
+
     'getDistributionGroup': {
         'command': 'Get-DistributionGroup {{{arguments}}} | ConvertTo-Json',
         'arguments': {
@@ -69,7 +74,7 @@ module.exports.o365CommandRegistry = {
         }
     },
 
-    'createDistributionGroup': {
+    'newDistributionGroup': {
 
         'command': 'New-DistributionGroup -Confirm:$False {{{arguments}}} | ConvertTo-Json',
 
@@ -89,7 +94,7 @@ module.exports.o365CommandRegistry = {
         }
     },
 
-    'updateDistributionGroup': {
+    'setDistributionGroup': {
 
         'command': 'Set-DistributionGroup -Confirm:$False {{{arguments}}}',
 
@@ -110,7 +115,7 @@ module.exports.o365CommandRegistry = {
     },
 
 
-    'deleteDistributionGroup': {
+    'removeDistributionGroup': {
 
         'command': 'Remove-DistributionGroup {{{arguments}}} -Confirm:$false',
 
@@ -159,6 +164,51 @@ module.exports.o365CommandRegistry = {
             'Identity':          {},
             'Member':            {}
         }
-    }
+    },
 
+
+
+
+    /*******************************
+    * MailContacts
+    ********************************/
+
+    'getMailContact': {
+        'command': 'Get-MailContact {{{arguments}}} | ConvertTo-Json',
+        'arguments': {
+            'Identity': {}
+        }
+    },
+
+    'newMailContact': {
+
+        'command': 'New-MailContact -Confirm:$False {{{arguments}}} | ConvertTo-Json',
+
+        'arguments': {
+            'Name':                  {},
+            'ExternalEmailAddress':  {}
+        }
+    },
+
+    'setMailContact': {
+
+        'command': 'Set-MailContact -Confirm:$False {{{arguments}}}',
+
+        'arguments': {
+            'Identity':             {},
+            'Name':                 {},
+            'DisplayName':          {},
+            'ExternalEmailAddress': {}
+        }
+    },
+
+
+    'removeMailContact': {
+
+        'command': 'Remove-MailContact {{{arguments}}} -Confirm:$false',
+
+        'arguments': {
+            'Identity':           {}
+        }
+    }
 };
