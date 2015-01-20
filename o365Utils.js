@@ -39,9 +39,24 @@ module.exports.getO365PSInitCommands = function(pathToDecryptUtilScript,
 
         // #5 import the relevant cmdlets (TODO: make this configurable)
         'Import-PSSession $session -CommandName *DistributionGroup* -AllowClobber',
-        'Import-PSSession $session -CommandName *Contact* -AllowClobber'
+        'Import-PSSession $session -CommandName *Contact* -AllowClobber',
+
+        // #6 connect to azure as well
+        'Connect-MsolService -Credential $PSCredential'
   ]
 }
+
+/**
+* Destroy commands that correspond to the session
+* established w/ the initCommands above
+*/
+module.exports.getO365PSDestroyCommands = function() {
+    return [
+          'Get-PSSession | Remove-PSSession',
+          'Remove-PSSession -Session $session',
+          'Remove-Module MsOnline'
+          ]
+  }
 
 
 /**
@@ -59,9 +74,35 @@ module.exports.o365CommandRegistry = {
     *    - quoted: true|false, default true
     *    - valued: true|false, default true
     *    - default: optional default value (only if valued..)
+    *    - secureString: true|false, default false
     *
     ********************************/
 
+    /*******************************
+    * MsolUser
+    ********************************/
+
+    'getMsolUser': {
+      'command': 'Get-MsolUser {{{arguments}}} | ConvertTo-Json',
+      'arguments': {
+        'UserPrincipalName': {}
+      }
+    },
+
+    'newMsolUser': {
+      'command': 'New-MsolUser {{{arguments}}} | ConvertTo-Json',
+      'arguments': {
+        'DisplayName': {},
+        'UserPrincipalName': {}
+      }
+    },
+
+    'removeMsolUser': {
+      'command': 'Remove-MsolUser -Force {{{arguments}}} ',
+      'arguments': {
+        'UserPrincipalName': {}
+      }
+    },
 
     /*******************************
     * DistributionGroups
@@ -83,7 +124,7 @@ module.exports.o365CommandRegistry = {
             'DisplayName':        {},
             'Alias':              {},
             'PrimarySmtpAddress': {},
-            'ManagedBy':          {},
+            'ManagedBy':          {'quoted':false},
             'Members':            {},
             'Type':               { 'default':'Security'},
             'ModerationEnabled':              { 'default':'$false', 'quoted':false},
