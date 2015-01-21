@@ -51,6 +51,55 @@ PSCommandService.prototype.execute = function(commandName, argument2ValueMap) {
   return this._execute(command);
 }
 
+/**
+* executeAll()
+*
+* Expects an array of commandNames -> argMaps to execute in order
+*   [
+*      {commandName: name1, argMap: {param:value, param:value, ...}},
+*      {commandName: name2, argMap: {param:value, param:value, ...}},
+*   ]
+*
+* Executes the named powershell commands as registered in the
+* command registry, applying the values from the argument maps
+* returns a promise that when fulfilled returns an cmdResults array
+* where each entry contains
+*            [
+*              {commandName: name1, command:cmd1, stdout:xxxx, stderr:xxxxx},
+*              {commandName: name2, command:cmd2, stdout:xxxx, stderr:xxxxx}
+*            ]
+*
+* On reject an error message
+*
+* @param array of commands
+*/
+PSCommandService.prototype.executeAll = function(cmdName2ArgValuesList) {
+
+  var commandsToExec = [];
+  var cmdResults = [];
+
+  for (var i=0; i<cmdName2ArgValuesList.length; i++) {
+      var cmdRequest = cmdName2ArgValuesList[i];
+      var commandConfig = this._commandRegistry[cmdRequest.commandName];
+      var command = this._generateCommand(commandConfig, cmdRequest.argMap);
+      commandsToExec.push(command);
+  }
+
+  // execute and get back ordered results
+  var cmdResults = this._executeCommands(commandsToExec);
+
+  // iterate over them (the order will match the order of the cmdName2ArgValuesList)
+  // modify each cmdResult adding the commandName attribute
+  for (var i=0; i<cmdResults.length; i++) {
+      var cmdResult = cmdResults[i];
+      var cmdRequest = cmdName2ArgValuesList[i];
+      cmdResult['commandName'] = cmdRequest.commandName;
+  }
+
+  return cmdResults;
+
+}
+
 
 
 /**
@@ -66,13 +115,10 @@ PSCommandService.prototype.execute = function(commandName, argument2ValueMap) {
 */
 PSCommandService.prototype._execute = function(command) {
   var self = this;
-
-  console.log('#########################\nExecuting:\n'+command+'\n#########################');
-
   return new Promise(function(fulfill,reject) {
     self._executeCommands([command])
     .then(function(cmdResults) {
-      fulfill(cmdResults[command]);
+      fulfill(cmdResults[0]); // only one will return
     }).catch(function(error) {
       reject('unexpected error getting executing command: ' + error + "\n" + error.stack);
     });
@@ -94,6 +140,14 @@ PSCommandService.prototype._execute = function(command) {
 */
 PSCommandService.prototype._executeCommands = function(commands) {
     var self = this;
+
+    var logBuffer = "";
+    for (var i=0; i<commands.length; i++) {
+        logBuffer += commands[i] + "\n";
+    }
+
+    console.log('#########################\nExecuting:\n'+logBuffer+'\n#########################');
+
 
     return new Promise(function(fulfill,reject) {
         self._statefulProcessCommandProxy.executeCommands(commands)

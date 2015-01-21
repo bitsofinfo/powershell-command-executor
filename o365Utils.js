@@ -63,6 +63,9 @@ module.exports.getO365PSDestroyCommands = function() {
 * Defines a registry of Powershell commands
 * that can be injected into the PSCommandService
 * instance
+*
+* Have weird issues w/ commands? experiment with
+* the parameter order... @see http://community.office365.com/en-us/f/148/p/289233/883257.aspx#883257
 */
 module.exports.o365CommandRegistry = {
 
@@ -74,7 +77,6 @@ module.exports.o365CommandRegistry = {
     *    - quoted: true|false, default true
     *    - valued: true|false, default true
     *    - default: optional default value (only if valued..)
-    *    - secureString: true|false, default false
     *
     ********************************/
 
@@ -124,9 +126,9 @@ module.exports.o365CommandRegistry = {
             'DisplayName':        {},
             'Alias':              {},
             'PrimarySmtpAddress': {},
+            'Type':               {'quoted':false, 'default':'Security'},
             'ManagedBy':          {'quoted':false},
-            'Members':            {},
-            'Type':               { 'default':'Security'},
+            //'Members':            {}, // specifying members on create does not seem to work
             'ModerationEnabled':              { 'default':'$false', 'quoted':false},
             'MemberDepartRestriction':        { 'default':'Closed'},
             'MemberJoinRestriction':          { 'default':'Closed'},
@@ -161,7 +163,9 @@ module.exports.o365CommandRegistry = {
         'command': 'Remove-DistributionGroup {{{arguments}}} -Confirm:$false',
 
         'arguments': {
-            'Identity':           {}
+            'Identity':           {},
+            // needed if invoking as global admin who is not explicitly a group admin.. stupid... yes.
+            'BypassSecurityGroupManagerCheck': {'valued': false}
         }
     },
 
@@ -182,7 +186,9 @@ module.exports.o365CommandRegistry = {
 
         'arguments': {
             'Identity':           {},
-            'Member':             {}
+            'Member':             {},
+            // needed if invoking as global admin who is not explicitly a group admin.. stupid... yes.
+            'BypassSecurityGroupManagerCheck': {'valued': false}
         }
     },
 
@@ -193,7 +199,9 @@ module.exports.o365CommandRegistry = {
 
         'arguments': {
             'Identity':           {},
-            'Members':            {}
+            'Members':            {},
+            // needed if invoking as global admin who is not explicitly a group admin.. stupid... yes.
+            'BypassSecurityGroupManagerCheck': {'valued': false}
         }
     },
 
@@ -203,7 +211,9 @@ module.exports.o365CommandRegistry = {
 
         'arguments': {
             'Identity':          {},
-            'Member':            {}
+            'Member':            {},
+            // needed if invoking as global admin who is not explicitly a group admin.. stupid... yes.
+            'BypassSecurityGroupManagerCheck': {'valued': false}
         }
     },
 
