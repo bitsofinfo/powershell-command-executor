@@ -22,6 +22,10 @@ module.exports.getO365PSInitCommands = function(pathToDecryptUtilScript,
                                                 operationTimeout,
                                                 idleTimeout) {
   return [
+        // #0 Encoding UTF8
+        'chcp 65001',
+        '$OutputEncoding = [System.Text.Encoding]::GetEncoding(65001)',
+
         // #1 import some basics
         'Import-Module MSOnline',
 
@@ -128,7 +132,8 @@ module.exports.o365CommandRegistry = {
             'PrimarySmtpAddress': {},
             'Type':               {'quoted':false, 'default':'Security'},
             'ManagedBy':          {'quoted':false},
-            //'Members':            {}, // specifying members on create does not seem to work
+            'MailTip':            {},
+            'Members':            {}, // specifying members on create does not seem to work
             'ModerationEnabled':              { 'default':'$false', 'quoted':false},
             'MemberDepartRestriction':        { 'default':'Closed'},
             'MemberJoinRestriction':          { 'default':'Closed'},
@@ -150,6 +155,7 @@ module.exports.o365CommandRegistry = {
             'ManagedBy':          {},
             'Members':            {},
             'Type':               { 'default':'Security'},
+            'MailTip':            {},
             'ModerationEnabled':              { 'default':'$false', 'quoted':false},
             'MemberDepartRestriction':        { 'default':'Closed'},
             'MemberJoinRestriction':          { 'default':'Closed'},
