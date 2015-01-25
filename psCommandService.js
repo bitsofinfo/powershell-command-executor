@@ -17,6 +17,38 @@ function PSCommandService(statefulProcessCommandProxy,commandRegistry) {
 }
 
 /**
+* Returns an array of all available command objects
+*
+* { commandName:name, command:commandString, arguments:{}, return: {} }
+*
+*/
+PSCommandService.prototype.getAvailableCommands = function() {
+    var commands = [];
+    for (var cmd in this._commandRegistry) {
+        commands.push({
+          'commandName' : cmd,
+          'command' : this._commandRegistry[cmd].command,
+          'arguments' : this._commandRegistry[cmd].arguments,
+          'return' : this._commandRegistry[cmd].return
+        });
+
+    }
+
+    return commands;
+}
+
+/**
+* getStatus()
+*
+* Return the status of all managed processes, an array
+* of structured ProcessProxy status objects
+*/
+PSCommandService.prototype.getStatus = function() {
+    var status = this._statefulProcessCommandProxy.getStatus();
+    return status;
+}
+
+/**
 * executeForStdout()
 *
 * Executes a named powershell command as registered in the
@@ -26,10 +58,28 @@ function PSCommandService(statefulProcessCommandProxy,commandRegistry) {
 *
 * On reject an error message
 *
-* @param array of commands
+* @param commandName
+* @param argument2ValueMap
 */
 PSCommandService.prototype.executeForStdout = function(commandName, argument2ValueMap) {
     return this._execute(commandName,argument2ValueMap).stdout;
+}
+
+/**
+* generateCommand()
+*
+* Generates an actual powershell command as registered in the
+* command registry, applying the values from the argument map
+* returns a literal command string that can be executed
+*
+*
+* @param commandName
+* @param argument2ValueMap
+*/
+PSCommandService.prototype.generateCommand = function(commandName, argument2ValueMap) {
+    var commandConfig = this._commandRegistry[commandName];
+    var generated = this._generateCommand(commandConfig, argument2ValueMap);
+    return generated;
 }
 
 /**
@@ -46,8 +96,7 @@ PSCommandService.prototype.executeForStdout = function(commandName, argument2Val
 * @param array of commands
 */
 PSCommandService.prototype.execute = function(commandName, argument2ValueMap) {
-  var commandConfig = this._commandRegistry[commandName];
-  var command = this._generateCommand(commandConfig, argument2ValueMap);
+  var command = this.generateCommand(commandName, argument2ValueMap);
   return this._execute(command);
 }
 
@@ -80,8 +129,7 @@ PSCommandService.prototype.executeAll = function(cmdName2ArgValuesList) {
 
   for (var i=0; i<cmdName2ArgValuesList.length; i++) {
       var cmdRequest = cmdName2ArgValuesList[i];
-      var commandConfig = this._commandRegistry[cmdRequest.commandName];
-      var command = this._generateCommand(commandConfig, cmdRequest.argMap);
+      var command = this.generateCommand(cmdRequest.commandName, cmdRequest.argMap);
       commandsToExec.push(command);
   }
 

@@ -82,6 +82,9 @@ module.exports.o365CommandRegistry = {
     *    - valued: true|false, default true
     *    - default: optional default value (only if valued..)
     *
+    * return properties:
+    *   type: none, text or json are valid values
+    *
     ********************************/
 
     /*******************************
@@ -92,7 +95,8 @@ module.exports.o365CommandRegistry = {
       'command': 'Get-MsolUser {{{arguments}}} | ConvertTo-Json',
       'arguments': {
         'UserPrincipalName': {}
-      }
+      },
+      'return': { type: 'json' }
     },
 
     'newMsolUser': {
@@ -100,14 +104,16 @@ module.exports.o365CommandRegistry = {
       'arguments': {
         'DisplayName': {},
         'UserPrincipalName': {}
-      }
+      },
+      'return': { type: 'json' }
     },
 
     'removeMsolUser': {
       'command': 'Remove-MsolUser -Force {{{arguments}}} ',
       'arguments': {
         'UserPrincipalName': {}
-      }
+      },
+      'return': { type: 'none' }
     },
 
     /*******************************
@@ -118,7 +124,8 @@ module.exports.o365CommandRegistry = {
         'command': 'Get-DistributionGroup {{{arguments}}} | ConvertTo-Json',
         'arguments': {
             'Identity': {}
-        }
+        },
+        'return': { type: 'json' }
     },
 
     'newDistributionGroup': {
@@ -139,7 +146,8 @@ module.exports.o365CommandRegistry = {
             'MemberJoinRestriction':          { 'default':'Closed'},
             'SendModerationNotifications':    { 'default':'Never', 'quoted':false},
 
-        }
+        },
+        'return': { type: 'json' }
     },
 
     'setDistributionGroup': {
@@ -160,7 +168,8 @@ module.exports.o365CommandRegistry = {
             'MemberDepartRestriction':        { 'default':'Closed'},
             'MemberJoinRestriction':          { 'default':'Closed'},
             'SendModerationNotifications':    { 'default':'Never', 'quoted':false}
-        }
+        },
+        'return': { type: 'none' }
     },
 
 
@@ -172,7 +181,8 @@ module.exports.o365CommandRegistry = {
             'Identity':           {},
             // needed if invoking as global admin who is not explicitly a group admin.. stupid... yes.
             'BypassSecurityGroupManagerCheck': {'valued': false}
-        }
+        },
+        'return': { type: 'none' }
     },
 
 
@@ -182,7 +192,8 @@ module.exports.o365CommandRegistry = {
 
         'arguments': {
             'Identity':           {}
-        }
+        },
+        'return': { type: 'json' }
     },
 
 
@@ -195,7 +206,8 @@ module.exports.o365CommandRegistry = {
             'Member':             {},
             // needed if invoking as global admin who is not explicitly a group admin.. stupid... yes.
             'BypassSecurityGroupManagerCheck': {'valued': false}
-        }
+        },
+        'return': { type: 'none' }
     },
 
     // members specified w/ this are a full overwrite..
@@ -208,7 +220,8 @@ module.exports.o365CommandRegistry = {
             'Members':            {},
             // needed if invoking as global admin who is not explicitly a group admin.. stupid... yes.
             'BypassSecurityGroupManagerCheck': {'valued': false}
-        }
+        },
+        'return': { type: 'none' }
     },
 
     'removeDistributionGroupMember': {
@@ -220,7 +233,8 @@ module.exports.o365CommandRegistry = {
             'Member':            {},
             // needed if invoking as global admin who is not explicitly a group admin.. stupid... yes.
             'BypassSecurityGroupManagerCheck': {'valued': false}
-        }
+        },
+        'return': { type: 'none' }
     },
 
 
@@ -234,7 +248,8 @@ module.exports.o365CommandRegistry = {
         'command': 'Get-MailContact {{{arguments}}} | ConvertTo-Json',
         'arguments': {
             'Identity': {}
-        }
+        },
+        'return': { type: 'json' }
     },
 
     'newMailContact': {
@@ -244,7 +259,9 @@ module.exports.o365CommandRegistry = {
         'arguments': {
             'Name':                  {},
             'ExternalEmailAddress':  {}
-        }
+        },
+
+        'return': { type: 'json' }
     },
 
     'setMailContact': {
@@ -256,7 +273,9 @@ module.exports.o365CommandRegistry = {
             'Name':                 {},
             'DisplayName':          {},
             'ExternalEmailAddress': {}
-        }
+        },
+
+        'return': { type: 'none' }
     },
 
 
@@ -266,6 +285,8 @@ module.exports.o365CommandRegistry = {
 
         'arguments': {
             'Identity':           {}
-        }
+        },
+
+        'return': { type: 'none' }
     }
 };
