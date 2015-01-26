@@ -18,7 +18,7 @@ Module that provides a registry and gateway for execution powershell commands th
 
 ###<a id="related"></a> Related Tools
 
-Have a look at these related projects which build on top of this module to provide some higher level functionality
+Have a look at these related projects which support and build on top of this module to provide more functionality
 
 * https://github.com/bitsofinfo/stateful-process-command-proxy - The core dependency of this module, provides the actual bridging between node.js and a pool of external shell processes
 * https://github.com/bitsofinfo/powershell-command-executor-ui - Builds on top of powershell-command-executor to provide a simple Node REST API and AngularJS interface for testing the execution of commands in the registry
