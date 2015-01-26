@@ -1,6 +1,6 @@
 # powershell-command-executor
 
-Module that provides a registry and gateway for execution powershell commands through long-lived established remote PSSessions
+Module that provides a registry and gateway for execution of pre-defined powershell commands through long-lived established remote PSSessions
 
 * [Related tools](#related)
 
