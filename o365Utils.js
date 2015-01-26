@@ -3,7 +3,7 @@
 * getO365PSInitCommands()
 *
 * Returns an array of Powershell initialization commands suitable
-* for setting up shells spawned with StatefuleProcesCommandProxy
+* for setting up shells spawned with StatefulProcessCommandProxy
 * to be able to establish a remote PSSession with o365
 *
 * @see https://github.com/bitsofinfo/powershell-credential-encryption-tools
@@ -14,6 +14,13 @@
 * - path to the secret key needed to decrypt the credentials
 *
 * In addition there are parameter to define the PSSessionOption timeouts
+* 
+* Note this is just an example (which works) however you may want to 
+* replace this with your own set of init command tailored to your specific
+* use-case
+* 
+* @see the getO365PSDestroyCommands() below for the corresponding cleanup
+* commands for these init commands
 */
 module.exports.getO365PSInitCommands = function(pathToDecryptUtilScript,
                                                 pathToCredsFile,
@@ -66,10 +73,12 @@ module.exports.getO365PSDestroyCommands = function() {
 /**
 * Defines a registry of Powershell commands
 * that can be injected into the PSCommandService
-* instance
+* instance. 
 *
-* Have weird issues w/ commands? experiment with
-* the parameter order... @see http://community.office365.com/en-us/f/148/p/289233/883257.aspx#883257
+* Note these are just some example configurations specifically for a few
+* o365 functions and limited arguments for each, (they work) however you may want to 
+* replace this with your own set of init command tailored to your specific
+* use-case
 */
 module.exports.o365CommandRegistry = {
 
