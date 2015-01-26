@@ -14,11 +14,11 @@
 * - path to the secret key needed to decrypt the credentials
 *
 * In addition there are parameter to define the PSSessionOption timeouts
-* 
-* Note this is just an example (which works) however you may want to 
+*
+* Note this is just an example (which works) however you may want to
 * replace this with your own set of init command tailored to your specific
 * use-case
-* 
+*
 * @see the getO365PSDestroyCommands() below for the corresponding cleanup
 * commands for these init commands
 */
@@ -73,10 +73,10 @@ module.exports.getO365PSDestroyCommands = function() {
 /**
 * Defines a registry of Powershell commands
 * that can be injected into the PSCommandService
-* instance. 
+* instance.
 *
 * Note these are just some example configurations specifically for a few
-* o365 functions and limited arguments for each, (they work) however you may want to 
+* o365 functions and limited arguments for each, (they work) however you may want to
 * replace this with your own set of init command tailored to your specific
 * use-case
 */
@@ -148,7 +148,6 @@ module.exports.o365CommandRegistry = {
             'PrimarySmtpAddress': {},
             'Type':               {'quoted':false, 'default':'Security'},
             'ManagedBy':          {'quoted':false},
-            'MailTip':            {},
             'Members':            {}, // specifying members on create does not seem to work
             'ModerationEnabled':              { 'default':'$false', 'quoted':false},
             'MemberDepartRestriction':        { 'default':'Closed'},
@@ -171,12 +170,12 @@ module.exports.o365CommandRegistry = {
             'PrimarySmtpAddress': {},
             'ManagedBy':          {},
             'Members':            {},
-            'Type':               { 'default':'Security'},
             'MailTip':            {},
             'ModerationEnabled':              { 'default':'$false', 'quoted':false},
             'MemberDepartRestriction':        { 'default':'Closed'},
             'MemberJoinRestriction':          { 'default':'Closed'},
-            'SendModerationNotifications':    { 'default':'Never', 'quoted':false}
+            'SendModerationNotifications':    { 'default':'Never', 'quoted':false},
+            'BypassSecurityGroupManagerCheck': {'valued': false}
         },
         'return': { type: 'none' }
     },
