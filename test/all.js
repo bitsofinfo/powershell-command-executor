@@ -35,7 +35,7 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
         name: "o365 RemotePSSession powershell pool",
         max: 1,
         min: 1,
-        idleTimeoutMillis: 30000,
+        idleTimeoutMS: 30000,
 
         logFunction: function(severity,origin,msg) {
           if (origin != 'Pool') {
