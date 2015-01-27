@@ -49,23 +49,6 @@ PSCommandService.prototype.getStatus = function() {
 }
 
 /**
-* executeForStdout()
-*
-* Executes a named powershell command as registered in the
-* command registry, applying the values from the argument map
-* returns a promise that when fulfilled returns the stdout
-* from the command.
-*
-* On reject an error message
-*
-* @param commandName
-* @param argument2ValueMap
-*/
-PSCommandService.prototype.executeForStdout = function(commandName, argument2ValueMap) {
-    return this._execute(commandName,argument2ValueMap).stdout;
-}
-
-/**
 * generateCommand()
 *
 * Generates an actual powershell command as registered in the

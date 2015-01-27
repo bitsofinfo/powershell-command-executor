@@ -10,7 +10,7 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
   name: "StatefulProcessCommandProxy",
   max: 1,
   min: 1,
-  idleTimeoutMillis: 10000,
+  idleTimeoutMillis:120000,
   log: function(severity,origin,msg) {
     console.log(severity.toUpperCase() + " " +origin+" "+ msg);
   },
@@ -23,7 +23,7 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
   processInvalidateOnRegex : {
     'any':[],
     'stdout':[],
-    'stderr':['.*'] // anything comes in on stderr, invalidate it
+    'stderr':['.*error.*']
   },
   processCwd : null,
   processEnvMap : null,
@@ -31,9 +31,9 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
   processGid : null,
 
   initCommands: o365Utils.getO365PSInitCommands(
-    'C:\\full\\path\\to\\powershell-credential-encryption-tools\\decryptUtil.ps1',
-    'C:\\full\\path\\to\\encrypted.credentials',
-    'C:\\full\\path\\to\\secret.key',
+    'C:\\pathto\\decryptUtil.ps1',
+    'C:\\pathto\\encrypted.credentials',
+    'C:\\pathto\\secret.key',
     10000,30000,60000),
 
 
@@ -50,7 +50,22 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
               [
               'Get-PSSession | Remove-PSSession',
               'Remove-PSSession -Session $session'
-              ]
+              ],
+
+
+  processCmdBlacklistRegex: ['.*\sdel\s.*'],
+
+  autoInvalidationConfig: {
+      'checkIntervalMS': 1000, // check every 30s
+      'commands': [
+            // no remote pssession established? invalid!
+            { 'command': 'Get-PSSession',
+              'regexes': {
+                  'stdout' : [ {'regex':'.*Opened.*', 'invalidOn':'noMatch'}]
+              }
+            }
+        ]
+    }
 
 });
 
@@ -59,11 +74,11 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
 * Fetch a group!
 */
 var psCommandService = new PSCommandService(statefulProcessCommandProxy, o365Utils.o365CommandRegistry);
-var promise = psCommandService.executeForStdout('getDistributionGroup',{'Identity':"someGroupName"})
+psCommandService.execute('getDistributionGroup',{'Identity':"someGroupName"})
           .then(function(groupJson) {
-            console.log(groupJson);
+              console.log(groupJson);
           }).catch(function(error) {
-            console.log(error);
+              console.log(error);
           });
 
-setTimeout(function(){statefulProcessCommandProxy.shutdown()},30000);
+setTimeout(function(){statefulProcessCommandProxy.shutdown()},80000);

@@ -18,7 +18,7 @@ var PSCommandService = require('../psCommandService');
 var PATH_TO_DECRYPT_UTIL_SCRIPT = 'C:\\pathto\\decryptUtil.ps1';
 var PATH_TO_ENCRYPTED_CREDENTIALS = 'C:\\pathto\\encrypted.credentials';
 var PATH_TO_SECRET_KEY = 'C:\\pathto\\secret.key';
-var O365_TENANT_DOMAIN_NAME = "fillmein.somedomain.com";
+var O365_TENANT_DOMAIN_NAME = "some.domain.com";
 
 describe('test PSCommandService w/ o365CommandRegistry', function() {
 
@@ -68,7 +68,21 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
             return processProxy.isValid();
         },
 
-        preDestroyCommands: o365Utils.getO365PSDestroyCommands()
+        preDestroyCommands: o365Utils.getO365PSDestroyCommands(),
+
+        processCmdBlacklistRegex: ['.*\sdel\s.*'],
+
+        autoInvalidationConfig: {
+            'checkIntervalMS': 5000, // check every 30s
+            'commands': [
+                // no remote pssession established? invalid!
+                { 'command': 'Get-PSSession',
+                  'regexes': {
+                    'stdout' : [ {'regex':'.*Opened.*', 'invalidOn':'noMatch'}]
+                  }
+                }
+            ]
+        }
 
       });
 
@@ -136,6 +150,32 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
         }
       }
 
+      var cleanupAndShutdown = function(done,error) {
+          psCommandService.execute('removeMsolUser', {'UserPrincipalName':testUserEmail });
+          psCommandService.execute('removeMsolUser', {'UserPrincipalName':testUser2Email });
+          psCommandService.execute('removeDistributionGroup', {'Identity':testGroupEmail });
+          psCommandService.execute('removeMailContact', {'Identity':testMailContactEmail });
+
+          // shut it all down
+          setTimeout(function() {
+              statefulProcessCommandProxy.shutdown();
+          },5000);
+
+          setTimeout(function() {
+             if (error) {
+                done(error);
+             } else {
+                done();
+             }
+
+          },10000);
+
+          // throw, it will stop the rest of the execution.
+          if (error) {
+              throw error;
+          }
+      }
+
 
       // #1 create test users that we will use
       var promise = psCommandService.executeAll(
@@ -158,7 +198,11 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
         .then(function(cmdResults) {
 
           return evalCmdResults(cmdResults, function(cmdResults) {
-              assert.equal(2,cmdResults.length);
+              try {
+                  assert.equal(2,cmdResults.length);
+              } catch(e) {
+                  cleanupAndShutdown(done,e);
+              }
               console.log("msolUsers added OK: " + testUserEmail + " & " + testUser2Email);
               return psCommandService.executeAll(
                     [
@@ -173,14 +217,22 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
         .then(function(cmdResults) {
 
             return evalCmdResults(cmdResults, function(cmdResults) {
-                assert.equal(2,cmdResults.length);
+                try {
+                    assert.equal(2,cmdResults.length);
+                } catch(e) {
+                    cleanupAndShutdown(done,e);
+                }
 
                 for (var i=0; i<cmdResults.length; i++) {
                   var cmdResult = cmdResults[i];
                   var msolUser = JSON.parse(cmdResult.stdout);
 
-                  // check that either of our expected ones are in here...
-                  assert((testUserEmail == msolUser.UserPrincipalName) || (testUser2Email == msolUser.UserPrincipalName));
+                  try {
+                      // check that either of our expected ones are in here...
+                      assert((testUserEmail == msolUser.UserPrincipalName) || (testUser2Email == msolUser.UserPrincipalName));
+                  } catch(e) {
+                      cleanupAndShutdown(done,e);
+                  }
                 }
 
                 console.log("msolUsers fetched OK");
@@ -202,7 +254,11 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
           return evalCmdResult(cmdResult, function(cmdResult) {
             var distributionGroup = JSON.parse(cmdResult.stdout);
-            assert.equal(testGroupEmail,distributionGroup.PrimarySmtpAddress);
+            try {
+                assert.equal(testGroupEmail,distributionGroup.PrimarySmtpAddress);
+            } catch(e) {
+                cleanupAndShutdown(done,e);
+            }
             console.log("distributionGroup created OK: " + distributionGroup.PrimarySmtpAddress);
             return psCommandService.execute('getDistributionGroup',
                         {
@@ -218,7 +274,11 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
           return evalCmdResult(cmdResult, function(cmdResult) {
             var distributionGroup = JSON.parse(cmdResult.stdout);
-            assert.equal(testGroupEmail,distributionGroup.PrimarySmtpAddress);
+            try {
+                assert.equal(testGroupEmail,distributionGroup.PrimarySmtpAddress);
+            } catch(e) {
+                cleanupAndShutdown(done,e);
+            }
             console.log("distributionGroup fetched OK: " + distributionGroup.PrimarySmtpAddress);
             return psCommandService.executeAll([
                 {'commandName':'addDistributionGroupMember',
@@ -260,7 +320,11 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
           return evalCmdResult(cmdResult, function(cmdResult) {
             var members = JSON.parse(cmdResult.stdout);
-            assert.equal(members.length,2);
+            try {
+                assert.equal(members.length,2);
+            } catch(e) {
+                cleanupAndShutdown(done,e);
+            }
             console.log("distributionGroup members fetched OK: " + members.length);
             return psCommandService.execute('removeDistributionGroupMember',
                   {
@@ -291,8 +355,12 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
           return evalCmdResult(cmdResult, function(cmdResult) {
             var members = JSON.parse("["+cmdResult.stdout+"]");
-            assert.equal(members.length,1);
-            assert.equal(members[0].WindowsLiveID , testUserEmail);
+            try {
+                assert.equal(members.length,1);
+                assert.equal(members[0].WindowsLiveID , testUserEmail);
+            } catch(e) {
+                cleanupAndShutdown(done,e);
+            }
             console.log("getDistributionGroupMember fetched OK: only user1 remains " + members.length);
             return psCommandService.execute('newMailContact',
             {
@@ -326,7 +394,11 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
           return evalCmdResult(cmdResult, function(cmdResult) {
             var contact = JSON.parse(cmdResult.stdout);
-            assert.equal(testMailContactEmail,contact.PrimarySmtpAddress);
+            try {
+                assert.equal(testMailContactEmail,contact.PrimarySmtpAddress);
+            } catch(e) {
+                cleanupAndShutdown(done,e);
+            }
             console.log("getMailContact fetched OK: " + testMailContactEmail);
             return psCommandService.execute('addDistributionGroupMember',
                 {
@@ -360,7 +432,11 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
           return evalCmdResult(cmdResult, function(cmdResult) {
             var members = JSON.parse(cmdResult.stdout);
-            assert.equal(members.length,2);
+            try {
+                assert.equal(members.length,2);
+            } catch(e) {
+                cleanupAndShutdown(done,e);
+            }
             console.log("getDistributionGroupMember fetched OK: one mail contact and one user exist " + members.length);
             return psCommandService.execute('removeDistributionGroup',
                   {
@@ -385,39 +461,14 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
         .then(function(nothing) {
             console.log("msolUser removed OK: " + testUserEmail);
 
-            // cleanup, shut it all down
-            psCommandService.execute('removeMsolUser', {'UserPrincipalName':testUserEmail });
-            psCommandService.execute('removeMsolUser', {'UserPrincipalName':testUser2Email });
-            psCommandService.execute('removeDistributionGroup', {'Identity':testGroupEmail });
-            psCommandService.execute('removeMailContact', {'Identity':testMailContactEmail });
-
-            setTimeout(function() {
-              statefulProcessCommandProxy.shutdown();
-            },10000);
-
-            setTimeout(function() {
-              done();
-            },20000);
+            cleanupAndShutdown(done,null);
 
         })
 
         .catch(function(error) {
           console.log(error  + "\n" + error.stack);
 
-          psCommandService.execute('removeMsolUser', {'UserPrincipalName':testUserEmail });
-          psCommandService.execute('removeMsolUser', {'UserPrincipalName':testUser2Email });
-          psCommandService.execute('removeDistributionGroup', {'Identity':testGroupEmail });
-          psCommandService.execute('removeMailContact', {'Identity':testMailContactEmail });
-
-          // shut it all down
-          setTimeout(function() {
-            statefulProcessCommandProxy.shutdown();
-          },10000);
-
-          setTimeout(function(error) {
-            done(error);
-          },20000);
-
+          cleanupAndShutdown(done,error);
 
         });
 
