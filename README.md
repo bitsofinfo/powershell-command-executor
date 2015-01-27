@@ -13,11 +13,11 @@ This module builds on top of [stateful-process-command-proxy](https://github.com
 
 ###<a name="usage"></a> Concepts
 
-### psCommandExecutor.js
+#### psCommandExecutor.js
 
 This provides the PSCommandService class which is a wrapper around [StatefulProcessCommandProxy](https://github.com/bitsofinfo/stateful-process-command-proxy) which lets a caller invoke "named" commands passing an map/hash of arguments. PSCommandService will generate the actual command and pass it to the StatefulProcessCommandProxy for execution and return the results. PSCommandService must be created passing an configured instance of [StatefulProcessCommandProxy](https://github.com/bitsofinfo/stateful-process-command-proxy) and a "registry" of commands. You can see an example of what a command registry looks like within ```o365Utils.js```. You don't have to use the latter registry.. you can create your own or just augment it with your own set of commands that you want to make available through PSCommandService.
 
-### o365Utils.js
+#### o365Utils.js
 
 This script simply exports a few useful pre-defined parameter sets (that one would pass to the constructor of StatefulProcessComamndProxy) for the initialization, destruction and auto-invalidation of "powershell" processes who connect to o365 and establish a remote PSSession that will be long lived. (and validate that the session is still legit)
 
