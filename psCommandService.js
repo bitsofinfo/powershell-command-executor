@@ -7,14 +7,37 @@ var Mustache = require('mustache');
 * PSCommandService
 *
 * @param statefulProcessCommandProxy all commands will be executed over this
+*
 * @param commandRegistry registry/hash of Powershell commands
 *        @see o365CommandRegistry.js for examples
 *
+* @param logFunction optional function that should have the signature
+*                            (severity,origin,message), where log messages will
+*                            be sent to. If null, logs will just go to console
+*
 */
-function PSCommandService(statefulProcessCommandProxy,commandRegistry) {
+function PSCommandService(statefulProcessCommandProxy,commandRegistry,logFunction) {
     this._statefulProcessCommandProxy = statefulProcessCommandProxy;
     this._commandRegistry = commandRegistry;
+    this._logFunction = logFunction;
 }
+
+// log function for no origin
+PSCommandService.prototype._log = function(severity,msg) {
+    this._log2(severity,this.__proto__.constructor.name,msg);
+}
+
+
+// Log function w/ origin
+PSCommandService.prototype._log2 = function(severity,origin,msg) {
+    if (this._logFunction) {
+        this._logFunction(severity,origin,msg);
+
+    } else {
+        console.log(severity.toUpperCase() + " " + origin + " " + msg);
+    }
+}
+
 
 /**
 * Returns an array of all available command objects
@@ -48,6 +71,17 @@ PSCommandService.prototype.getStatus = function() {
     return status;
 }
 
+// get a CommandConfig by commandName, throws error otherwise
+PSCommandService.prototype._getCommandConfig = function(commandName) {
+    var commandConfig = this._commandRegistry[commandName];
+    if (!commandConfig) {
+        var msg = ("No command registered by name: " + commandName);
+        this._log('error',msg)
+        throw new Error(msg);
+    }
+    return commandConfig;
+}
+
 /**
 * generateCommand()
 *
@@ -58,9 +92,10 @@ PSCommandService.prototype.getStatus = function() {
 *
 * @param commandName
 * @param argument2ValueMap
+* @return command generated, otherwise Error if command not found
 */
 PSCommandService.prototype.generateCommand = function(commandName, argument2ValueMap) {
-    var commandConfig = this._commandRegistry[commandName];
+    var commandConfig = this._getCommandConfig(commandName);
     var generated = this._generateCommand(commandConfig, argument2ValueMap);
     return generated;
 }
@@ -74,7 +109,7 @@ PSCommandService.prototype.generateCommand = function(commandName, argument2Valu
 * object from the command which contains properties
 * (command, stdout, stderr)
 *
-* On reject an error message
+* On reject an Error object
 *
 * @param array of commands
 */
@@ -101,14 +136,13 @@ PSCommandService.prototype.execute = function(commandName, argument2ValueMap) {
 *              {commandName: name2, command:cmd2, stdout:xxxx, stderr:xxxxx}
 *            ]
 *
-* On reject an error message
+* On reject an Error object
 *
-* @param array of commands
+* @param array of {commandName -> arglist}
 */
 PSCommandService.prototype.executeAll = function(cmdName2ArgValuesList) {
 
   var commandsToExec = [];
-  var cmdResults = [];
 
   for (var i=0; i<cmdName2ArgValuesList.length; i++) {
       var cmdRequest = cmdName2ArgValuesList[i];
@@ -116,18 +150,30 @@ PSCommandService.prototype.executeAll = function(cmdName2ArgValuesList) {
       commandsToExec.push(command);
   }
 
+  var self = this;
+
   // execute and get back ordered results
-  var cmdResults = this._executeCommands(commandsToExec);
+  return new Promise(function(fulfill,reject) {
 
-  // iterate over them (the order will match the order of the cmdName2ArgValuesList)
-  // modify each cmdResult adding the commandName attribute
-  for (var i=0; i<cmdResults.length; i++) {
-      var cmdResult = cmdResults[i];
-      var cmdRequest = cmdName2ArgValuesList[i];
-      cmdResult['commandName'] = cmdRequest.commandName;
-  }
+      self._executeCommands(commandsToExec)
+            .then(function(cmdResults) {
 
-  return cmdResults;
+                // iterate over them (the order will match the order of the cmdName2ArgValuesList)
+                // modify each cmdResult adding the commandName attribute
+                for (var i=0; i<cmdResults.length; i++) {
+                    var cmdResult = cmdResults[i];
+                    var cmdRequest = cmdName2ArgValuesList[i];
+                    cmdResult['commandName'] = cmdRequest.commandName;
+                }
+
+                fulfill(cmdResults);
+
+            }).catch(function(error) {
+                self._log('error','Unexepected error in executeAll(): ' + error + ' ' + error.stack);
+                reject(error);
+            });
+    });
+
 
 }
 
@@ -140,7 +186,7 @@ PSCommandService.prototype.executeAll = function(cmdName2ArgValuesList) {
 * returns a promise when fulfilled returns the cmdResult object from the command
 * which contains 3 properties (command, stdout, stderr)
 *
-* On reject an error message
+* On reject an Error Object
 *
 * @param array of commands
 */
@@ -148,11 +194,12 @@ PSCommandService.prototype._execute = function(command) {
   var self = this;
   return new Promise(function(fulfill,reject) {
     self._executeCommands([command])
-    .then(function(cmdResults) {
-      fulfill(cmdResults[0]); // only one will return
-    }).catch(function(error) {
-      reject('unexpected error getting executing command: ' + error + "\n" + error.stack);
-    });
+        .then(function(cmdResults) {
+            fulfill(cmdResults[0]); // only one will return
+        }).catch(function(error) {
+            self._log('error','Unexepected error in _execute(): ' + error + ' ' + error.stack);
+            reject(error);
+        });
   });
 }
 
@@ -165,7 +212,7 @@ PSCommandService.prototype._execute = function(command) {
 
 * { <command> : {command: <command>, stdout: value, stderr: value }}
 *
-* On reject an error message
+* On reject an Error object
 *
 * @param array of commands
 */
@@ -182,11 +229,12 @@ PSCommandService.prototype._executeCommands = function(commands) {
 
     return new Promise(function(fulfill,reject) {
         self._statefulProcessCommandProxy.executeCommands(commands)
-        .then(function(cmdResults) {
-            fulfill(cmdResults);
-        }).catch(function(error) {
-            reject('unexpected error getting executing commands: ' + error + "\n" + error.stack);
-        });
+            .then(function(cmdResults) {
+                fulfill(cmdResults);
+            }).catch(function(error) {
+                self._log('error','Unexepected error from _statefulProcessCommandProxy.executeCommands(): ' + error + ' ' + error.stack);
+                reject(error);
+            });
     });
 }
 
@@ -198,88 +246,97 @@ PSCommandService.prototype._executeCommands = function(commands) {
 *
 * @return a formatted powershell command string suitable for execution
 *
+* @throws Error if any exception occurs
+*
 * !!!! TODO: review  security protection for "injection" (i.e command termination, newlines etc)
 */
 PSCommandService.prototype._generateCommand = function(commandConfig, argument2ValueMap) {
 
-    var argumentsConfig = commandConfig.arguments;
+    try {
+        var argumentsConfig = commandConfig.arguments;
 
-    var argumentsString = "";
+        var argumentsString = "";
 
-    for (var argumentName in argumentsConfig) {
+        for (var argumentName in argumentsConfig) {
 
-        if(argumentsConfig.hasOwnProperty(argumentName)) {
+            if(argumentsConfig.hasOwnProperty(argumentName)) {
 
-            var argument = argumentsConfig[argumentName];
+                var argument = argumentsConfig[argumentName];
 
-            // is argument valued
-            if ((argument.hasOwnProperty('valued') ? argument.valued : true)) {
+                // is argument valued
+                if ((argument.hasOwnProperty('valued') ? argument.valued : true)) {
 
-                var isQuoted = (argument.hasOwnProperty('quoted') ? argument.quoted : true);
-                var passedArgValues = argument2ValueMap[argumentName];
+                    var isQuoted = (argument.hasOwnProperty('quoted') ? argument.quoted : true);
+                    var passedArgValues = argument2ValueMap[argumentName];
 
-                if (!(passedArgValues instanceof Array)) {
+                    if (!(passedArgValues instanceof Array)) {
 
-                    if (typeof passedArgValues === 'undefined') {
+                        if (typeof passedArgValues === 'undefined') {
 
-                        if (argument.hasOwnProperty('default')) {
-                            passedArgValues = [argument.default];
+                            if (argument.hasOwnProperty('default')) {
+                                passedArgValues = [argument.default];
+                            } else {
+                                passedArgValues = [];
+                            }
+
                         } else {
-                            passedArgValues = [];
+                            passedArgValues = [passedArgValues];
+                        }
+                    }
+
+                    var argumentValues = "";
+                    for (var i=0; i<passedArgValues.length; i++) {
+
+                        var passedArgValue = passedArgValues[i];
+
+                        var valueToSet;
+
+                        if (passedArgValue && passedArgValue != 'undefined') {
+                            valueToSet = passedArgValue;
+
+                        } else if (argument.hasOwnProperty('default')) {
+                            valueToSet = argument.default;
                         }
 
-                    } else {
-                        passedArgValues = [passedArgValues];
+                        // append the value
+                        if (valueToSet && valueToSet.trim().length > 0) {
+
+                            // sanitize
+                            valueToSet = this._sanitize(valueToSet);
+
+                            // append w/ quotes (SINGLE QUOTES, not double to avoid expansion)
+                            argumentValues += (this._finalizeParameterValue(valueToSet,isQuoted) + ",");
+                        }
                     }
+
+                    // were values appended?
+                    if (argumentValues.length > 0) {
+
+                        // append to arg string
+                        argumentsString += (("-"+argumentName+" ") + argumentValues);
+
+                        if (argumentsString.lastIndexOf(',') == (argumentsString.length -1)) {
+                            argumentsString = argumentsString.substring(0,argumentsString.length-1);
+                        }
+                        argumentsString += " ";
+                    }
+
+                    // argument is NOT valued, just append the name
+                } else {
+                    argumentsString += ("-"+argumentName+" ");
                 }
 
-                var argumentValues = "";
-                for (var i=0; i<passedArgValues.length; i++) {
-
-                    var passedArgValue = passedArgValues[i];
-
-                    var valueToSet;
-
-                    if (passedArgValue && passedArgValue != 'undefined') {
-                        valueToSet = passedArgValue;
-
-                    } else if (argument.hasOwnProperty('default')) {
-                        valueToSet = argument.default;
-                    }
-
-                    // append the value
-                    if (valueToSet && valueToSet.trim().length > 0) {
-
-                        // sanitize
-                        valueToSet = this._sanitize(valueToSet);
-
-                        // append w/ quotes (SINGLE QUOTES, not double to avoid expansion)
-                        argumentValues += (this._finalizeParameterValue(valueToSet,isQuoted) + ",");
-                    }
-                }
-
-                // were values appended?
-                if (argumentValues.length > 0) {
-
-                    // append to arg string
-                    argumentsString += (("-"+argumentName+" ") + argumentValues);
-
-                    if (argumentsString.lastIndexOf(',') == (argumentsString.length -1)) {
-                        argumentsString = argumentsString.substring(0,argumentsString.length-1);
-                    }
-                    argumentsString += " ";
-                }
-
-                // argument is NOT valued, just append the name
-            } else {
-                argumentsString += ("-"+argumentName+" ");
             }
 
         }
 
-    }
+        return Mustache.render(commandConfig.command,{'arguments':argumentsString});
 
-    return Mustache.render(commandConfig.command,{'arguments':argumentsString});
+    } catch(exception) {
+        var msg = ("Unexpected error in _generateCommand(): " + exception + ' ' + exception.stack);
+        this._log('error',msg)
+        throw new Error(msg);
+    }
 }
 
 PSCommandService.prototype._finalizeParameterValue = function(valueToSet, applyQuotes) {

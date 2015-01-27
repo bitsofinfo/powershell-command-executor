@@ -53,7 +53,10 @@ module.exports.getO365PSInitCommands = function(pathToDecryptUtilScript,
         'Import-PSSession $session -CommandName *Contact* -AllowClobber',
 
         // #6 connect to azure as well
-        'Connect-MsolService -Credential $PSCredential'
+        'Connect-MsolService -Credential $PSCredential',
+
+        // #7 cleanup
+        'Remove-Variable $PSCredential'
   ]
 }
 
@@ -67,6 +70,23 @@ module.exports.getO365PSDestroyCommands = function() {
           'Remove-PSSession -Session $session',
           'Remove-Module MsOnline'
           ]
+  }
+
+/**
+* Configuration auto invalidation, checking PSSession availability
+* @param checkIntervalMS
+*/
+module.exports.getO365AutoInvalidationConfig = function(checkIntervalMS) {
+      return {
+              'checkIntervalMS': checkIntervalMS,
+              'commands': [
+              // no remote pssession established? invalid!
+              { 'command': 'Get-PSSession',
+                'regexes': {
+                  'stdout' : [ {'regex':'.*Opened.*', 'invalidOn':'noMatch'}]
+                }
+              }]
+          };
   }
 
 

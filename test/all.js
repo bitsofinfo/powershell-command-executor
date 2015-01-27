@@ -18,7 +18,7 @@ var PSCommandService = require('../psCommandService');
 var PATH_TO_DECRYPT_UTIL_SCRIPT = 'C:\\pathto\\decryptUtil.ps1';
 var PATH_TO_ENCRYPTED_CREDENTIALS = 'C:\\pathto\\encrypted.credentials';
 var PATH_TO_SECRET_KEY = 'C:\\pathto\\secret.key';
-var O365_TENANT_DOMAIN_NAME = "some.domain.com";
+var O365_TENANT_DOMAIN_NAME = "somedomain.com";
 
 describe('test PSCommandService w/ o365CommandRegistry', function() {
 
@@ -72,22 +72,18 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
         processCmdBlacklistRegex: ['.*\sdel\s.*'],
 
-        autoInvalidationConfig: {
-            'checkIntervalMS': 5000, // check every 30s
-            'commands': [
-                // no remote pssession established? invalid!
-                { 'command': 'Get-PSSession',
-                  'regexes': {
-                    'stdout' : [ {'regex':'.*Opened.*', 'invalidOn':'noMatch'}]
-                  }
-                }
-            ]
-        }
+        autoInvalidationConfig: o365Utils.getO365AutoInvalidationConfig(30000)
 
       });
 
+      var myLogFunction = function(severity,origin,message) {
+          console.log(severity.toUpperCase() + ' ' + origin + ' ' + message);
+      }
+
       // create our PSCommandService
-      var psCommandService = new PSCommandService(statefulProcessCommandProxy, o365Utils.o365CommandRegistry);
+      var psCommandService = new PSCommandService(statefulProcessCommandProxy,
+                                                  o365Utils.o365CommandRegistry,
+                                                  myLogFunction);
 
       // random seed for generated data
       var random = "unitTest"+Math.abs(Math.floor(Math.random() * (1000 - 99999 + 1) + 1000));

@@ -46,34 +46,27 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
   },
 
 
-  preDestroyCommands:
-              [
-              'Get-PSSession | Remove-PSSession',
-              'Remove-PSSession -Session $session'
-              ],
+  preDestroyCommands: o365Utils.getO365PSDestroyCommands(),
 
 
   processCmdBlacklistRegex: ['.*\sdel\s.*'],
 
-  autoInvalidationConfig: {
-      'checkIntervalMS': 1000, // check every 30s
-      'commands': [
-            // no remote pssession established? invalid!
-            { 'command': 'Get-PSSession',
-              'regexes': {
-                  'stdout' : [ {'regex':'.*Opened.*', 'invalidOn':'noMatch'}]
-              }
-            }
-        ]
-    }
+  autoInvalidationConfig: o365Utils.getO365AutoInvalidationConfig(30000)
 
 });
+
+var myLogFunction = function(severity,origin,message) {
+    console.log(severity.toUpperCase() + ' ' + origin + ' ' + message);
+}
 
 
 /**
 * Fetch a group!
 */
-var psCommandService = new PSCommandService(statefulProcessCommandProxy, o365Utils.o365CommandRegistry);
+var psCommandService = new PSCommandService(statefulProcessCommandProxy,
+                                            o365Utils.o365CommandRegistry,
+                                            myLogFunction);
+
 psCommandService.execute('getDistributionGroup',{'Identity':"someGroupName"})
           .then(function(groupJson) {
               console.log(groupJson);
