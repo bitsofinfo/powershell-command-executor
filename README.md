@@ -7,11 +7,11 @@ Module that provides a registry and gateway for execution of pre-defined powersh
 * [Usage](#usage)
 * [Related tools](#related)
 
-![Alt text](/diagram1.png "Diagram1")
-
 ###<a name="overview"></a> Overview
 
 This module builds on top of [stateful-process-command-proxy](https://github.com/bitsofinfo/stateful-process-command-proxy) to provide a higher level API for a registry of pre-defined commands, specifically for various powershell operations agains Office365; or any powershell command really, you just need to configure them. The module provides a simplified interface to pass arguments to various "named" commands, sanitize the arguments and return the results. This module supports concepts that would permit the construction of a higher level interface to this system, such as via a REST API or user interface... see [powershell-command-executor-ui](https://github.com/bitsofinfo/powershell-command-executor-ui) for a working example of this concept in an useable implementation.
+
+![Alt text](/diagram1.png "Diagram1")
 
 ###<a name="usage"></a> Concepts
 
