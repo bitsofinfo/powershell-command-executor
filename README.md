@@ -5,6 +5,7 @@ Node.js module that provides a registry and gateway for execution of pre-defined
 * [Overview](#overview)
 * [Concepts](#concepts)
 * [Usage](#usage)
+* [History](#history)
 * [Related tools](#related)
 
 ###<a name="overview"></a> Overview
@@ -36,6 +37,13 @@ This script simply exports a few useful pre-defined parameter sets (that one wou
 5) Tweak the group that is fetched at the bottom of ```example.js```
 
 7) There is also a unit-test (```test\all.js```) for the command registry in ```o365Utils.js``` which gives an example of usage.
+
+###<a id="history"></a> History
+
+```
+v1.0-beta.1 - 2014-01-28
+    - Initial version
+```
 
 ###<a id="related"></a> Related Tools
 
