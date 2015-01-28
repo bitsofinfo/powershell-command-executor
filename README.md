@@ -2,6 +2,8 @@
 
 Node.js module that provides a registry and gateway for execution of pre-defined powershell commands through long-lived established remote PSSessions. 
 
+[![NPM](https://nodei.co/npm/powershell-command-executor.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/powershell-command-executor/)
+
 * [Overview](#overview)
 * [Concepts](#concepts)
 * [Usage](#usage)
