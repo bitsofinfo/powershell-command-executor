@@ -347,6 +347,5 @@ module.exports.getO365WhitelistedCommands = function() {
         var commandStart = config.command.substring(0,config.command.indexOf(' ')).trim();
         whitelist.push({'regex':'^'+commandStart+'\\s+.*', 'flags':'i'});
     }
-    console.log(whitelist);
     return whitelist;
 }
