@@ -56,7 +56,7 @@ module.exports.getO365PSInitCommands = function(pathToDecryptUtilScript,
         'Connect-MsolService -Credential $PSCredential',
 
         // #7 cleanup
-        'Remove-Variable $PSCredential'
+        'Remove-Variable -Force -ErrorAction SilentlyContinue $PSCredential'
   ]
 }
 
