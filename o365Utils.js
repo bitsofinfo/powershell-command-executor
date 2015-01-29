@@ -73,6 +73,35 @@ module.exports.getO365PSDestroyCommands = function() {
   }
 
 /**
+* Some example blacklisted commands
+*/
+module.exports.getO365BlacklistedCommands = function() {
+  return [
+      {'regex':'.*Invoke-Expression.*', 'flags':'i'},
+      {'regex':'.*ScriptBlock.*', 'flags':'i'},
+      {'regex':'.*Get-Acl.*', 'flags':'i'},
+      {'regex':'.*Set-Acl.*', 'flags':'i'},
+      {'regex':'.*Get-Content.*', 'flags':'i'},
+      {'regex':'.*-History.*', 'flags':'i'},
+      {'regex':'.*Out-File.*', 'flags':'i'}
+  ]
+}
+
+/**
+* Some example whitelisted commands
+* (only permit) what is in the registry
+*/
+module.exports.getO365WhitelistedCommands = function() {
+    var whitelist = [];
+    for (var cmdName in Object.keys(o365CommandRegistry)) {
+        var config = o365CommandRegistry[cmdName];
+        var commandStart = config.command.substring(0,config.indexOf(' ')).trim();
+        whitelist.push({'regex':'^'+commandStart+'\\s.*', 'flags':'i'});
+    }
+    return whitelist;
+}
+
+/**
 * Configuration auto invalidation, checking PSSession availability
 * @param checkIntervalMS
 */
@@ -83,7 +112,7 @@ module.exports.getO365AutoInvalidationConfig = function(checkIntervalMS) {
               // no remote pssession established? invalid!
               { 'command': 'Get-PSSession',
                 'regexes': {
-                  'stdout' : [ {'regex':'.*Opened.*', 'invalidOn':'noMatch'}]
+                  'stdout' : [ {'regex':'.*Opened.*', 'flags':'i', 'invalidOn':'noMatch'}]
                 }
               }]
           };

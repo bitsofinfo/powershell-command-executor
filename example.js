@@ -23,7 +23,7 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
   processInvalidateOnRegex : {
     'any':[],
     'stdout':[],
-    'stderr':['.*error.*']
+    'stderr':[{'regex':'.*error.*'}]
   },
   processCwd : null,
   processEnvMap : null,
@@ -48,8 +48,9 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
 
   preDestroyCommands: o365Utils.getO365PSDestroyCommands(),
 
+  processCmdWhitelistRegex: o365Utils.getO365WhitelistedCommands(),
 
-  processCmdBlacklistRegex: ['.*\sdel\s.*'],
+  processCmdBlacklistRegex: o365Utils.getO365BlacklistedCommands(),
 
   autoInvalidationConfig: o365Utils.getO365AutoInvalidationConfig(30000)
 

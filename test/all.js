@@ -49,9 +49,9 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
         processRetainMaxCmdHistory : 30,
         processInvalidateOnRegex : {
-          'any':['.*nomatch.*'],
-          'stdout':['.*nomatch.*'],
-          'stderr':['.*nomatch.*']
+          'any':[{'regex':'.*nomatch.*','flags':'i'}],
+          'stdout':[{'regex':'.*nomatch.*'}],
+          'stderr':[{'regex':'.*nomatch.*'}]
         },
         processCwd : null,
         processEnvMap : null,
@@ -70,7 +70,9 @@ describe('test PSCommandService w/ o365CommandRegistry', function() {
 
         preDestroyCommands: o365Utils.getO365PSDestroyCommands(),
 
-        processCmdBlacklistRegex: ['.*\sdel\s.*'],
+        processCmdBlacklistRegex: o365Utils.getO365BlacklistedCommands(),
+
+        processCmdWhitelistRegex: o365Utils.getO365WhitelistedCommands(),
 
         autoInvalidationConfig: o365Utils.getO365AutoInvalidationConfig(30000)
 
