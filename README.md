@@ -10,13 +10,13 @@ Node.js module that provides a registry and gateway for execution of pre-defined
 * [History](#history)
 * [Related tools](#related)
 
-###<a name="overview"></a> Overview
+### <a name="overview"></a>Overview 
 
 This Node.js module builds on top of [stateful-process-command-proxy](https://github.com/bitsofinfo/stateful-process-command-proxy) to provide a higher level API for a registry of pre-defined commands, specifically for various powershell operations agains Office365; or any powershell command really, you just need to configure them. The module provides a simplified interface to pass arguments to various "named" commands, sanitize the arguments and return the results. This module supports concepts that would permit the construction of a higher level interface to this system, such as via a REST API or user interface... see [powershell-command-executor-ui](https://github.com/bitsofinfo/powershell-command-executor-ui) for a working example of this concept in an useable implementation.
 
 ![Alt text](/diagram1.png "Diagram1")
 
-###<a name="usage"></a> Concepts
+### <a name="concepts"></a>Concepts
 
 #### psCommandExecutor.js
 
@@ -26,7 +26,7 @@ This provides the PSCommandService class which is a wrapper around [StatefulProc
 
 This script simply exports a few useful pre-defined parameter sets (that one would pass to the constructor of StatefulProcessComamndProxy) for the initialization, destruction and auto-invalidation of "powershell" processes who connect to o365 and establish a remote PSSession that will be long lived. (and validate that the session is still legit)
 
-###<a name="usage"></a> Usage
+### <a name="usage"></a>Usage
 
 1) Configure your o365 tenant with a user with the appropriate permissions to manage o365 via Powershell. [See this article to get going](https://bitsofinfo.wordpress.com/2015/01/06/configuring-powershell-for-azure-ad-and-o365-exchange-management/)
 
@@ -40,7 +40,7 @@ This script simply exports a few useful pre-defined parameter sets (that one wou
 
 7) There is also a unit-test (```test\all.js```) for the command registry in ```o365Utils.js``` which gives an example of usage.
 
-###<a id="history"></a> History
+### <a id="history"></a>History
 
 ```
 v1.0-beta2 - 2014-01-28
@@ -50,7 +50,7 @@ v1.0-beta.1 - 2014-01-28
     - Initial version
 ```
 
-###<a id="related"></a> Related Tools
+### <a id="related"></a>Related Tools
 
 Have a look at these related projects which support and build on top of this module to provide more functionality
 
