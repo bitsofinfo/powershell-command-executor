@@ -88,20 +88,6 @@ module.exports.getO365BlacklistedCommands = function() {
 }
 
 /**
-* Some example whitelisted commands
-* (only permit) what is in the registry
-*/
-module.exports.getO365WhitelistedCommands = function() {
-    var whitelist = [];
-    for (var cmdName in Object.keys(o365CommandRegistry)) {
-        var config = o365CommandRegistry[cmdName];
-        var commandStart = config.command.substring(0,config.indexOf(' ')).trim();
-        whitelist.push({'regex':'^'+commandStart+'\\s.*', 'flags':'i'});
-    }
-    return whitelist;
-}
-
-/**
 * Configuration auto invalidation, checking PSSession availability
 * @param checkIntervalMS
 */
@@ -129,7 +115,7 @@ module.exports.getO365AutoInvalidationConfig = function(checkIntervalMS) {
 * replace this with your own set of init command tailored to your specific
 * use-case
 */
-module.exports.o365CommandRegistry = {
+var o365CommandRegistry = {
 
     /*******************************
     *
@@ -347,3 +333,20 @@ module.exports.o365CommandRegistry = {
         'return': { type: 'none' }
     }
 };
+
+module.exports.o365CommandRegistry = o365CommandRegistry;
+
+/**
+* Some example whitelisted commands
+* (only permit) what is in the registry
+*/
+module.exports.getO365WhitelistedCommands = function() {
+    var whitelist = [];
+    for (var cmdName in o365CommandRegistry) {
+        var config = o365CommandRegistry[cmdName];
+        var commandStart = config.command.substring(0,config.command.indexOf(' ')).trim();
+        whitelist.push({'regex':'^'+commandStart+'\\s+.*', 'flags':'i'});
+    }
+    console.log(whitelist);
+    return whitelist;
+}

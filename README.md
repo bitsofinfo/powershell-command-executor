@@ -1,6 +1,6 @@
 # powershell-command-executor
 
-Node.js module that provides a registry and gateway for execution of pre-defined powershell commands through long-lived established remote PSSessions. 
+Node.js module that provides a registry and gateway for execution of pre-defined powershell commands through long-lived established remote PSSessions.
 
 [![NPM](https://nodei.co/npm/powershell-command-executor.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/powershell-command-executor/)
 
@@ -43,6 +43,9 @@ This script simply exports a few useful pre-defined parameter sets (that one wou
 ###<a id="history"></a> History
 
 ```
+v1.0-beta2 - 2014-01-28
+    - Whitelisting of commands
+
 v1.0-beta.1 - 2014-01-28
     - Initial version
 ```
