@@ -234,8 +234,7 @@ PSCommandService.prototype._executeCommands = function(commands) {
         logBuffer += commands[i] + "\n";
     }
 
-    console.log('#########################\nExecuting:\n'+logBuffer+'\n#########################');
-
+    self._log('Executing:\n'+logBuffer+'\n');
 
     return new Promise(function(fulfill,reject) {
         self._statefulProcessCommandProxy.executeCommands(commands)
