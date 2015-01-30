@@ -107,7 +107,7 @@ PSCommandService.prototype.generateCommand = function(commandName, argument2Valu
 * command registry, applying the values from the argument map
 * returns a promise that when fulfilled returns the cmdResult
 * object from the command which contains properties
-* (command, stdout, stderr)
+* {commandName: name, command:generatedCommand, stdout:xxxx, stderr:xxxxx}
 *
 * On reject an Error object
 *
@@ -115,7 +115,17 @@ PSCommandService.prototype.generateCommand = function(commandName, argument2Valu
 */
 PSCommandService.prototype.execute = function(commandName, argument2ValueMap) {
   var command = this.generateCommand(commandName, argument2ValueMap);
-  return this._execute(command);
+  var self = this;
+  return new Promise(function(fulfill,reject) {
+      self._execute(command)
+          .then(function(cmdResult) {
+              // tack on commandName
+              cmdResult['commandName'] = commandName;
+              fulfill(cmdResult);
+          }).catch(function(error){
+              reject(error);    
+          });
+  });
 }
 
 /**
