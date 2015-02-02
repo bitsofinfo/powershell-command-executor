@@ -357,6 +357,9 @@ PSCommandService.prototype._finalizeParameterValue = function(valueToSet, applyQ
 PSCommandService.prototype._sanitize = function(toSanitize) {
     toSanitize.replace(/(\n)/g, "\\$1"); // escape newlines
 
-    // escape stuff that could screw up variables, or break quoting
-    return toSanitize.replace(/(['`#])/g, "`$1");
+    // escape stuff that could screw up variables
+    toSanitize = toSanitize.replace(/([`#])/g, "`$1");
+
+    // fix quote breaking
+    return toSanitize.replace(/(['])/g, "'$1")
 }
