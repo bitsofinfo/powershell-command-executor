@@ -182,7 +182,7 @@ var o365CommandRegistry = {
             'Alias':              {},
             'PrimarySmtpAddress': {},
             'Type':               {'quoted':false, 'default':'Security'},
-            'ManagedBy':          {'quoted':false},
+            'ManagedBy':          {},
             'Members':            {}, // specifying members on create does not seem to work
             'ModerationEnabled':              { 'default':'$false', 'quoted':false},
             'MemberDepartRestriction':        { 'default':'Closed'},
