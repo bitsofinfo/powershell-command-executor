@@ -355,7 +355,9 @@ PSCommandService.prototype._finalizeParameterValue = function(valueToSet, applyQ
 }
 
 PSCommandService.prototype._sanitize = function(toSanitize,isQuoted) {
-    toSanitize.replace(/(\n)/g, "\\$1"); // escape newlines
+    toSanitize = toSanitize.replace(/([\n\r])/g, ""); // kill true newlines/feeds
+
+    toSanitize = toSanitize.replace(/(\\n)/g, "\\$1"); // kill string based newline attempts
 
     // escape stuff that could screw up variables
     toSanitize = toSanitize.replace(/([`#])/g, "`$1");
@@ -366,7 +368,7 @@ PSCommandService.prototype._sanitize = function(toSanitize,isQuoted) {
 
     // if not quoted, stop $ and |
     } else {
-        toSanitize = toSanitize.replace(/([\$\|])/g, "`$1");
+        toSanitize = toSanitize.replace(/([\$\|\(\)\{\}\[\]]\\)/g, "`$1");
     }
 
     return toSanitize;
