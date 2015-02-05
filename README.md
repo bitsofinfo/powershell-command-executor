@@ -43,16 +43,16 @@ This script simply exports a few useful pre-defined parameter sets (that one wou
 ### <a id="history"></a>History
 
 ```
-v1.0-beta.4 - 2014-02-05
+v1.0-beta.4 - 2015-02-05
     - Fixes to quote sanitization, bug fixes
     
-v1.0-beta.3 - 2014-01-30
+v1.0-beta.3 - 2015-01-30
     - Tweaks to init commands
     
-v1.0-beta.2 - 2014-01-28
+v1.0-beta.2 - 2015-01-28
     - Whitelisting of commands
 
-v1.0-beta.1 - 2014-01-28
+v1.0-beta.1 - 2015-01-28
     - Initial version
 ```
 
