@@ -184,7 +184,7 @@ var o365CommandRegistry = {
             'Type':               {'quoted':false, 'default':'Security'},
             'ManagedBy':          {},
             'Members':            {}, // specifying members on create does not seem to work
-            'ModerationEnabled':              { 'default':'$false', 'quoted':false},
+            'ModerationEnabled':              { 'default':'0', 'quoted':false},
             'MemberDepartRestriction':        { 'default':'Closed'},
             'MemberJoinRestriction':          { 'default':'Closed'},
             'SendModerationNotifications':    { 'default':'Never', 'quoted':false},
@@ -206,7 +206,7 @@ var o365CommandRegistry = {
             'ManagedBy':          {},
             'Members':            {},
             'MailTip':            {},
-            'ModerationEnabled':              { 'default':'$false', 'quoted':false},
+            'ModerationEnabled':              { 'default':'0', 'quoted':false},
             'MemberDepartRestriction':        { 'default':'Closed'},
             'MemberJoinRestriction':          { 'default':'Closed'},
             'SendModerationNotifications':    { 'default':'Never', 'quoted':false},

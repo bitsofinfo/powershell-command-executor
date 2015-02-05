@@ -360,9 +360,13 @@ PSCommandService.prototype._sanitize = function(toSanitize,isQuoted) {
     // escape stuff that could screw up variables
     toSanitize = toSanitize.replace(/([`#])/g, "`$1");
 
-    // fix quote breaking
+    // if quoted, escape all quotes
     if (isQuoted) {
         toSanitize = toSanitize.replace(/(['])/g, "'$1");
+
+    // if not quoted, stop $ and |
+    } else {
+        toSanitize = toSanitize.replace(/([\$\|])/g, "`$1");
     }
 
     return toSanitize;
