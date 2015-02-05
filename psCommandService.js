@@ -123,7 +123,7 @@ PSCommandService.prototype.execute = function(commandName, argument2ValueMap) {
               cmdResult['commandName'] = commandName;
               fulfill(cmdResult);
           }).catch(function(error){
-              reject(error);    
+              reject(error);
           });
   });
 }
@@ -311,7 +311,7 @@ PSCommandService.prototype._generateCommand = function(commandConfig, argument2V
                         if (valueToSet && valueToSet.trim().length > 0) {
 
                             // sanitize
-                            valueToSet = this._sanitize(valueToSet);
+                            valueToSet = this._sanitize(valueToSet,isQuoted);
 
                             // append w/ quotes (SINGLE QUOTES, not double to avoid expansion)
                             argumentValues += (this._finalizeParameterValue(valueToSet,isQuoted) + ",");
@@ -354,12 +354,16 @@ PSCommandService.prototype._finalizeParameterValue = function(valueToSet, applyQ
     return valueToSet;
 }
 
-PSCommandService.prototype._sanitize = function(toSanitize) {
+PSCommandService.prototype._sanitize = function(toSanitize,isQuoted) {
     toSanitize.replace(/(\n)/g, "\\$1"); // escape newlines
 
     // escape stuff that could screw up variables
     toSanitize = toSanitize.replace(/([`#])/g, "`$1");
 
     // fix quote breaking
-    return toSanitize.replace(/(['])/g, "'$1")
+    if (isQuoted) {
+        toSanitize = toSanitize.replace(/(['])/g, "'$1");
+    }
+
+    return toSanitize;
 }
