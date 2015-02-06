@@ -368,7 +368,7 @@ PSCommandService.prototype._sanitize = function(toSanitize,isQuoted) {
 
     // if not quoted, stop $ and |
     } else {
-        toSanitize = toSanitize.replace(/([\$\|\(\)\{\}\[\]]\\)/g, "`$1");
+        toSanitize = toSanitize.replace(/([\$\|\(\)\{\}\[\]\\])/g, "`$1");
     }
 
     return toSanitize;
