@@ -43,13 +43,16 @@ This script simply exports a few useful pre-defined parameter sets (that one wou
 ### <a id="history"></a>History
 
 ```
+v1.0-beta.7 - 2015-02-10
+    - Add semi-colins to sanitization
+    
 v1.0-beta.6 - 2015-02-06
     - Bug fix to injection
     
 v1.0-beta.5 - 2015-02-06
     - Further improvement for argument injection
     
-v1.0-beta.4 through v1.0-beta.6 - 2015-02-05
+v1.0-beta.4 - 2015-02-05
     - Fixes to quote sanitization, bug fixes
     
 v1.0-beta.3 - 2015-01-30
