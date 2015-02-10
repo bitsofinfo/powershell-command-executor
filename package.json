@@ -1,6 +1,6 @@
 {
     "name":"powershell-command-executor",
-    "version":"1.0.0-beta.6",
+    "version":"1.0.0-beta.7",
     "description":"Provides a registry and gateway for execution powershell commands through long-lived established remote PSSessions via a stateful-process-command-proxy pool of powershell processes",
     "main":"psCommandService.js",
     "directories":{
