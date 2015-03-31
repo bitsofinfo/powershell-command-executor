@@ -43,6 +43,9 @@ This script simply exports a few useful pre-defined parameter sets (that one wou
 ### <a id="history"></a>History
 
 ```
+v1.0-beta.8 - 2015-???
+    - Get-DistributionGroupMember - added "-ResultSize Unlimited" 
+
 v1.0-beta.7 - 2015-02-10
     - Add semi-colins to sanitization
     
