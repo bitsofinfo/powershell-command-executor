@@ -231,7 +231,7 @@ var o365CommandRegistry = {
 
     'getDistributionGroupMember': {
 
-        'command': 'Get-DistributionGroupMember {{{arguments}}} | ConvertTo-Json',
+        'command': 'Get-DistributionGroupMember {{{arguments}}} -ResultSize Unlimited | ConvertTo-Json',
 
         'arguments': {
             'Identity':           {}
