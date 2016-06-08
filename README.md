@@ -10,7 +10,7 @@ Node.js module that provides a registry and gateway for execution of pre-defined
 * [History](#history)
 * [Related tools](#related)
 
-### <a name="overview"></a>Overview 
+### <a name="overview"></a>Overview
 
 This Node.js module builds on top of [stateful-process-command-proxy](https://github.com/bitsofinfo/stateful-process-command-proxy) to provide a higher level API for a registry of pre-defined commands, specifically for various powershell operations agains Office365; or any powershell command really, you just need to configure them. The module provides a simplified interface to pass arguments to various "named" commands, sanitize the arguments and return the results. This module supports concepts that would permit the construction of a higher level interface to this system, such as via a REST API or user interface... see [powershell-command-executor-ui](https://github.com/bitsofinfo/powershell-command-executor-ui) for a working example of this concept in an useable implementation.
 
@@ -43,24 +43,24 @@ This script simply exports a few useful pre-defined parameter sets (that one wou
 ### <a id="history"></a>History
 
 ```
-v1.0-beta.8 - 2015-???
-    - Get-DistributionGroupMember - added "-ResultSize Unlimited" 
+v1.0.0 - 2016-06-08
+    - Get-DistributionGroupMember - added "-ResultSize Unlimited"
 
 v1.0-beta.7 - 2015-02-10
     - Add semi-colins to sanitization
-    
+
 v1.0-beta.6 - 2015-02-06
     - Bug fix to injection
-    
+
 v1.0-beta.5 - 2015-02-06
     - Further improvement for argument injection
-    
+
 v1.0-beta.4 - 2015-02-05
     - Fixes to quote sanitization, bug fixes
-    
+
 v1.0-beta.3 - 2015-01-30
     - Tweaks to init commands
-    
+
 v1.0-beta.2 - 2015-01-28
     - Whitelisting of commands
 
