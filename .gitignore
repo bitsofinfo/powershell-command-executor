@@ -1,0 +1,11 @@
+# Node.js Tools for Visual Studio
+.ntvs_analysis.dat
+node_modules/
+
+*.code-workspace
+
+# Visual Studio cache files
+# files ending in .cache can be ignored
+*.[Cc]ache
+# but keep track of directories ending in .cache
+!?*.[Cc]ache/
