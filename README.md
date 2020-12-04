@@ -34,15 +34,18 @@ This script simply exports a few useful pre-defined parameter sets (that one wou
 
 3) From within this project install the necessary npm dependencies for this module, including [stateful-process-command-proxy](https://github.com/bitsofinfo/stateful-process-command-proxy). You can checkout the latter manually and do a ```npm install stateful-process-command-proxy```
 
-4) Configure ```example.js``` appropriately, in particular the ```initCommands``` for the StatefulProcessCommandProxy; the paths to the items you created via the second step above
+4) Configure ```example.js```/```example_key_auth.js```/```examplekey_thumb_auth.js``` appropriately, in particular the ```initCommands``` for the StatefulProcessCommandProxy; the paths to the items you created via the second step above
 
-5) Tweak the group that is fetched at the bottom of ```example.js```
+5) Tweak the group that is fetched at the bottom of ```example.js```/```example_key_auth.js```/```examplekey_thumb_auth.js```
 
-7) There is also a unit-test (```test\all.js```) for the command registry in ```o365Utils.js``` which gives an example of usage.
+7) There is also a unit-test (```test\all.js```) for the command registry in ```o365Utils.js``` which gives an example of usage for all thre possible Exchange connect variations.
 
 ### <a id="history"></a>History
 
 ```
+v1.1.0 - 2020-12-03
+    - Added option for key and thumbprint based Exchange authentication
+
 v1.0.0 - 2016-06-08
     - Get-DistributionGroupMember - added "-ResultSize Unlimited"
 
