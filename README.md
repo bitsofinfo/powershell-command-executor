@@ -26,6 +26,20 @@ This provides the PSCommandService class which is a wrapper around [StatefulProc
 
 This script simply exports a few useful pre-defined parameter sets (that one would pass to the constructor of StatefulProcessComamndProxy) for the initialization, destruction and auto-invalidation of "powershell" processes who connect to o365 and establish a remote PSSession that will be long lived. (and validate that the session is still legit)
 
+#### Exchange authentication
+
+`o365Utils.js` init command `getO365PSInitCommands` is using a deprecated authentication [method](https://techcommunity.microsoft.com/t5/exchange-team-blog/modern-auth-and-unattended-scripts-in-exchange-online-powershell/ba-p/1497387)
+
+Mictosoft has added [Exchange Online PowerShell V2](https://techcommunity.microsoft.com/t5/exchange-team-blog/announcing-general-availability-of-the-exchange-online/ba-p/1436623) that supports cerificate based authentication.
+
+Full setup is descibed [here](https://adamtheautomator.com/exchange-online-powershell-mfa/)
+
+Three sets of init commands are availiable as of version `1.1.0`:
+
+* `getO365PSInitCommands` - backward compatible old basic authentication
+* `getO365PSKeyInitCommands` - new Exchange authentication with private key and password
+* `getO365PSThumbprintInitCommands` - new Exchange authentication with the thumb print for the certificate
+
 ### <a name="usage"></a>Usage
 
 1) Configure your o365 tenant with a user with the appropriate permissions to manage o365 via Powershell. [See this article to get going](https://bitsofinfo.wordpress.com/2015/01/06/configuring-powershell-for-azure-ad-and-o365-exchange-management/)

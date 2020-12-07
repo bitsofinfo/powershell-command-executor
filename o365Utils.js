@@ -80,8 +80,8 @@ module.exports.getO365PSDestroyCommands = function () {
  * to be able to establish a remote PSSession with o365
  *
  * @see https://github.com/bitsofinfo/powershell-credential-encryption-tools
- * @see https: //docs.microsoft.com/en-us/powershell/module/exchange/connect-exchangeonline?view=exchange-ps
- * @see https: //adamtheautomator.com/exchange-online-powershell-mfa/#Authenticating_Using_Local_PFX_Certificate
+ * @see https://docs.microsoft.com/en-us/powershell/module/exchange/connect-exchangeonline?view=exchange-ps
+ * @see https://adamtheautomator.com/exchange-online-powershell-mfa/#Authenticating_Using_Local_PFX_Certificate
  *
  * This function takes the full path to:
  * - decryptUtil.ps1 from the project above
@@ -173,8 +173,8 @@ module.exports.getO365PSKeyDestroyCommands = function () {
  * to be able to establish a remote PSSession with o365
  *
  * @see https://github.com/bitsofinfo/powershell-credential-encryption-tools
- * @see https: //docs.microsoft.com/en-us/powershell/module/exchange/connect-exchangeonline?view=exchange-ps
- * @see https: //adamtheautomator.com/exchange-online-powershell-mfa/#Authenticating_Using_Certificate_Thumbprint
+ * @see https://docs.microsoft.com/en-us/powershell/module/exchange/connect-exchangeonline?view=exchange-ps
+ * @see https://adamtheautomator.com/exchange-online-powershell-mfa/#Authenticating_Using_Certificate_Thumbprint
  *
  * This function takes the full path to:
  * - decryptUtil.ps1 from the project above
