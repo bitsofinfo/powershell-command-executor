@@ -29,10 +29,14 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
   processUid : null,
   processGid : null,
 
-  initCommands: o365Utils.getO365PSInitCommands(
+  initCommands: o365Utils.getO365PSKeyInitCommands(
     'C:\\pathto\\decryptUtil.ps1',
     'C:\\pathto\\encrypted.credentials',
     'C:\\pathto\\secret.key',
+    'C:\\pathto\\certificate',
+    'certificatePassword',
+    '00000000-00000000-00000000-00000000',
+    'your.exhange.domain.name',
     10000,30000,60000),
 
 
@@ -45,7 +49,7 @@ var statefulProcessCommandProxy = new StatefulProcessCommandProxy({
   },
 
 
-  preDestroyCommands: o365Utils.getO365PSDestroyCommands(),
+  preDestroyCommands: o365Utils.getO365PSKeyDestroyCommands(),
 
   processCmdWhitelistRegex: o365Utils.getO365WhitelistedCommands(),
 
