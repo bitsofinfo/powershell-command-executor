@@ -57,6 +57,9 @@ Three sets of init commands are availiable as of version `1.1.0`:
 ### <a id="history"></a>History
 
 ```
+v1.1.1 - 2020-12-07
+    - Fixed bug import of custom commands if provided for certificate based auth
+
 v1.1.0 - 2020-12-03
     - Added option for key and thumbprint based Exchange authentication
 
