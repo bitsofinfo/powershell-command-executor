@@ -146,7 +146,7 @@ module.exports.getO365PSKeyInitCommands = function (pathToDecryptUtilScript,
         '$CertificatePassword = (ConvertTo-SecureString -String "' + authCertificatePassword + '" -AsPlainText -Force)',
 
         // #6 connect to exchange
-        'Connect-ExchangeOnline -CertificateFilePath $CertificateFilePath -CertificatePassword $CertificatePassword  -AppID ' + applicationId + ' -Organization ' + organizationId + psCommandsToImport,
+        'Connect-ExchangeOnline -CertificateFilePath $CertificateFilePath -CertificatePassword $CertificatePassword  -AppID ' + applicationId + ' -Organization ' + organizationId + ' ' + psCommandsToImport,
 
         // #7 cleanup
         'Remove-Variable -Force -ErrorAction SilentlyContinue $PSCredential'
@@ -235,7 +235,7 @@ module.exports.getO365PSThumbprintInitCommands = function (pathToDecryptUtilScri
         ('$sessionOpt = New-PSSessionOption -OpenTimeout ' + openTimeout + ' -OperationTimeout ' + operationTimeout + ' -IdleTimeout ' + idleTimeout),
 
         // #6 connect to exchange
-        'Connect-ExchangeOnline -CertificateThumbPrint ' + certificateThumbPrint + '  -AppID ' + applicationId + ' -Organization ' + organizationId + psCommandsToImport,
+        'Connect-ExchangeOnline -CertificateThumbPrint ' + certificateThumbPrint + '  -AppID ' + applicationId + ' -Organization ' + organizationId + ' ' + psCommandsToImport,
 
         // #7 cleanup
         'Remove-Variable -Force -ErrorAction SilentlyContinue $PSCredential'
