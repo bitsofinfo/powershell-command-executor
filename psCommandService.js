@@ -4,6 +4,12 @@ var Promise = require('promise');
 var Mustache = require('mustache');
 
 /**
+ * Reserved varabled in Powershell to allow as arguments
+ * @see https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.2
+ */
+const reservedVariableNames = ['$null', '$false', '$true'];
+
+/**
 * PSCommandService
 *
 * @param statefulProcessCommandProxy all commands will be executed over this
@@ -366,6 +372,9 @@ PSCommandService.prototype._sanitize = function(toSanitize,isQuoted) {
     if (isQuoted) {
         toSanitize = toSanitize.replace(/(['])/g, "'$1");
 
+    // skip if this is reserved variable name
+    } else if (reservedVariableNames.contains(toSanitize)) {
+      // skip it
     // if not quoted, stop $ and |
     } else {
         toSanitize = toSanitize.replace(/([;\$\|\(\)\{\}\[\]\\])/g, "`$1");
