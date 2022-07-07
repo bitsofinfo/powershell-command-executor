@@ -98,3 +98,10 @@ Have a look at these related projects which support and build on top of this mod
 * https://github.com/bitsofinfo/stateful-process-command-proxy - The core dependency of this module, provides the actual bridging between node.js and a pool of external shell processes
 * https://github.com/bitsofinfo/powershell-command-executor-ui - Builds on top of powershell-command-executor to provide a simple Node REST API and AngularJS interface for testing the execution of commands in the registry
 * https://github.com/bitsofinfo/meteor-shell-command-mgr - Small Meteor app that lets you manage/generate a command registry for powershell-command-executor
+
+## notes
+
+```
+npm login
+npm publish
+```
