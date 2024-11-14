@@ -360,25 +360,45 @@ PSCommandService.prototype._finalizeParameterValue = function(valueToSet, applyQ
     return valueToSet;
 }
 
-PSCommandService.prototype._sanitize = function(toSanitize,isQuoted) {
-    toSanitize = toSanitize.replace(/([\n\r])/g, ""); // kill true newlines/feeds
+PSCommandService.prototype._sanitize = function (toSanitize, isQuoted) {
+  toSanitize = toSanitize
+    .replace(/[\n\r]/g, "") // kill true newlines/feeds
+    .replace(/\\n/g, "\\$&") // kill string based newline attempts
+    .replace(/[`#]/g, "`$&"); // escape stuff that could screw up variables
 
-    toSanitize = toSanitize.replace(/(\\n)/g, "\\$1"); // kill string based newline attempts
+  if (isQuoted) { // if quoted, escape all quotes
+    toSanitize = toSanitize.replace(/'/g, "'$&");
+  } else if (
+    !reservedVariableNames.includes(toSanitize) && // skip if this is reserved variable name
+    multiValuedRegex.test(toSanitize) // process is this is multi-valued parameter
+  ) { 
+    const extractParams = (str, key) => {
+      const match = str.match(new RegExp(`${key}="([^;]+)(?:";|"})`, "i"));
+      return match
+        ? match[1]
+            .split(",")
+            .map((param) =>
+              param.trim().replace(sanitizeRegex, "`$&").replace(/^"|"$/g, "")
+            )
+        : [];
+    };
 
-    // escape stuff that could screw up variables
-    toSanitize = toSanitize.replace(/([`#])/g, "`$1");
+    const addItemsSanitized = extractParams(toSanitize, "Add");
+    const removeItemsSanitized = extractParams(toSanitize, "Remove");
 
-    // if quoted, escape all quotes
-    if (isQuoted) {
-        toSanitize = toSanitize.replace(/(['])/g, "'$1");
-
-    // skip if this is reserved variable name
-    } else if (reservedVariableNames.includes(toSanitize)) {
-      // skip it
-    // if not quoted, stop $ and |
-    } else {
-        toSanitize = toSanitize.replace(/([;\$\|\(\)\{\}\[\]\\])/g, "`$1");
+    let result = "@{";
+    if (addItemsSanitized.length > 0) {
+      result += `Add="${addItemsSanitized.join('","')}"`;
     }
+    if (removeItemsSanitized.length > 0) {
+      if (addItemsSanitized.length > 0) result += "; ";
+      result += `Remove="${removeItemsSanitized.join('","')}"`;
+    }
+    result += "}";
+    toSanitize = result;
+  } else {
+    toSanitize = toSanitize.replace(sanitizeRegex, "`$&");
+  }
 
-    return toSanitize;
-}
+  return toSanitize;
+};
