@@ -57,6 +57,9 @@ Three sets of init commands are availiable as of version `1.1.0`:
 ### <a id="history"></a>History
 
 ```
+v1.1.3 - 2024-11-14
+    - Added support for [multivalued parameters](https://learn.microsoft.com/en-us/exchange/modifying-multivalued-properties-exchange-2013-help) in commands
+
 v1.1.2 - 2022-07-06
     - Added support for usage of reserved powershell variables in commands [$null, $true, $false]
 
