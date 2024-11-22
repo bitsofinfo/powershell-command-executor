@@ -1,0 +1,13 @@
+version: '3'
+services:
+  test:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - APPLICATION_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      - TENANT=XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      - CERTIFICATE_PASSWORD=XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      - CERTIFICATE=XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      - O365_TENANT_DOMAIN_NAME=sample.com
