@@ -463,6 +463,7 @@ describe('test PSCommandService w/ o365CommandRegistry', function () {
             TENANT_ID,
             10000, 30000, 60000), o365Utils.getO365PSDestroyCommands());
     });
+    // The CertificateThumbprint parameter is supported only in Microsoft Windows.
     it('Should test all group and mail contact commands then cleanup with Certificate Thumb Print based auth', function (done) {
         this.timeout(120000);
         testRun(done, o365Utils.getO365PSInitCommands(

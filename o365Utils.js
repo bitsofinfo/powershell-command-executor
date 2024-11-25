@@ -602,7 +602,13 @@ var o365CommandRegistry = {
         'return': {
             type: 'none'
         }
-    }
+    },
+    getStatus: {
+      command: 'Get-ConnectionInformation | ConvertTo-Json',
+      return: {
+        type: 'json'
+      }
+    },    
 };
 
 module.exports.o365CommandRegistry = o365CommandRegistry;

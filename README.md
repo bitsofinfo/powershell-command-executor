@@ -7,6 +7,7 @@ Node.js module that provides a registry and gateway for execution of pre-defined
 * [Overview](#overview)
 * [Concepts](#concepts)
 * [Usage](#usage)
+* [Testing](#testing)
 * [History](#history)
 * [Related tools](#related)
 
@@ -54,9 +55,20 @@ Three sets of init commands are availiable as of version `1.1.0`:
 
 7) There is also a unit-test (```test\all.js```) for the command registry in ```o365Utils.js``` which gives an example of usage for all thre possible Exchange connect variations.
 
+### <a id="testing"></a>Testing 
+Project test can be executed by running `npm test` command on Windows machine. Connection to Exchange Online is required for the tests to pass.
+
+There is also option to run Docker based tests. You need to configure `environment` variables in `docker-compose.yml` file in order to define connection parameters. To run tests in Docker container, execute `docker-compose run test` command once the configuration is done.
+
+Exchange online tests will be skipped if the connection is not available.
+
+
 ### <a id="history"></a>History
 
 ```
+v1.1.4 - 2024-11-22
+    - Extended testing and fixed escaping reserved variables and special characters in commands
+
 v1.1.3 - 2024-11-14
     - Added support for [multivalued parameters](https://learn.microsoft.com/en-us/exchange/modifying-multivalued-properties-exchange-2013-help) in commands
 
