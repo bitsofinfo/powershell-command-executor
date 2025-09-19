@@ -96,6 +96,9 @@ const commandRegistry = {
     command: "Get-Content {{{arguments}}}",
     arguments: {
       'Path': {},
+      'Filter': {
+        empty: true,
+      },
     },
     return: {
       type: "text",
@@ -647,6 +650,57 @@ describe("test PSCommandService w/ o365CommandRegistry", function () {
       await psCommandService.execute("removeItem", {
         Path: "./test.txt",
        });    
+      setTimeout(() => {
+        statefulProcessCommandProxy.shutdown();
+      }, 5000);
+    }
+  });
+  it("Should test empty value support", async function () {
+    this.timeout(10000);
+    const statefulProcessCommandProxy = new StatefulProcessCommandProxy({
+      name: "Powershell pool",
+      max: 1,
+      min: 1,
+      idleTimeoutMS: 30000,
+
+      logFunction: logFunction,
+      processCommand: "pwsh",
+      processArgs: ["-Command", "-"],
+      processRetainMaxCmdHistory: 30,
+      processCwd: null,
+      processEnvMap: null,
+      processUid: null,
+      processGid: null,
+      initCommands: initCommands,
+      validateFunction: (processProxy) => processProxy.isValid(),
+    });
+
+    const psCommandService = new PSCommandService(
+      statefulProcessCommandProxy,
+      commandRegistry,
+      myLogFunction
+    );
+    try {
+      const newResult = await psCommandService.execute("setContent", {
+        Path: "./test.txt",
+        Value: "Test",
+        Filter: ""
+      });
+      assert.equal(newResult.command.trim(), "Set-Content -Path './test.txt' -Value 'Test'");
+      assert.equal(newResult.stderr, "");
+      const getResult = await psCommandService.execute("getContent", {
+        Path: "./test.txt",
+        Filter: ""
+      });
+      assert.equal(getResult.command.trim(), "Get-Content -Path './test.txt' -Filter ''");
+      assert.equal(getResult.stderr, "");
+      assert.equal(getResult.stdout, "Test");
+    } catch (e) {
+      assert.fail(e);
+    } finally {
+      await psCommandService.execute("removeItem", {
+        Path: "./test.txt",
+       });
       setTimeout(() => {
         statefulProcessCommandProxy.shutdown();
       }, 5000);

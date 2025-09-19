@@ -62,10 +62,48 @@ There is also option to run Docker based tests. You need to configure `environme
 
 Exchange online tests will be skipped if the connection is not available.
 
+### Empty Argument Values Support
+
+As of version 1.1.5, the module now supports passing empty string values to PowerShell command arguments when explicitly configured. This is useful for optional parameters that need to be passed as empty values rather than omitted entirely.
+
+To enable empty value support for a command argument, set the `empty` property to `true` in the argument configuration:
+
+```javascript
+const commandRegistry = {
+  'myCommand': {
+    command: "Get-Content {{{arguments}}}",
+    arguments: {
+      'Path': {},
+      'Filter': {
+        empty: true,  // Allow empty string values
+      },
+    },
+    return: {
+      type: "text",
+    }
+  }
+};
+```
+
+When `empty: true` is set, the argument will accept empty string values and include them in the generated PowerShell command:
+
+```javascript
+// This will generate: Get-Content -Path './test.txt' -Filter ''
+await psCommandService.execute("myCommand", {
+  Path: "./test.txt",
+  Filter: ""  // Empty string value is now allowed
+});
+```
+
+
 
 ### <a id="history"></a>History
 
 ```
+v1.1.5 - 2025-09-19
+    - Added support for empty argument values in commands via 'empty' property
+    - Fixed argument value bleed into the next empty argument
+
 v1.1.4 - 2024-11-22
     - Extended testing and fixed escaping reserved variables and special characters in commands
 
@@ -74,6 +112,7 @@ v1.1.3 - 2024-11-14
 
 v1.1.2 - 2022-07-06
     - Added support for usage of reserved powershell variables in commands [$null, $true, $false]
+
 
 v1.1.1 - 2020-12-07
     - Fixed bug import of custom commands if provided for certificate based auth

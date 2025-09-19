@@ -282,6 +282,7 @@ PSCommandService.prototype._generateCommand = function(commandConfig, argument2V
                 if ((argument.hasOwnProperty('valued') ? argument.valued : true)) {
 
                     var isQuoted = (argument.hasOwnProperty('quoted') ? argument.quoted : true);
+                    var isEmpty = (argument.hasOwnProperty('empty') ? argument.empty : false);
                     var passedArgValues = argument2ValueMap[argumentName];
 
                     if (!(passedArgValues instanceof Array)) {
@@ -314,7 +315,7 @@ PSCommandService.prototype._generateCommand = function(commandConfig, argument2V
                         }
 
                         // append the value
-                        if (valueToSet && valueToSet.trim().length > 0) {
+                        if (valueToSet !== null && valueToSet !== undefined && (isEmpty || valueToSet.trim().length > 0)) {
 
                             // sanitize
                             valueToSet = this._sanitize(valueToSet,isQuoted);
